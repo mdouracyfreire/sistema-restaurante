@@ -15,7 +15,7 @@ public class Lanche {
 
     public void setNome(String nome) {
         if (nome == null || nome.trim().isEmpty()) {
-            throw new IllegalArgumentException("O nome não pode ser vazio!");
+            throw new IllegalArgumentException("O nome do lanche não pode ser vazio!");
         }
         this.nome = nome;
     }
