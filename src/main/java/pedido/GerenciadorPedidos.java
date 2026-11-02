@@ -49,4 +49,16 @@ public class GerenciadorPedidos {
 
         return combinacoes;
     }
+
+    public Set<String> obterLanchesBase() {
+        HashSet<String> nomesBase = new HashSet<>();
+
+        for (Pedido pedido : pedidos.values()) {
+            for (ItemCardapio item : pedido.getItens()) {
+                nomesBase.add(item.getNomeBase());
+            }
+        }
+
+        return nomesBase;
+    }
 }

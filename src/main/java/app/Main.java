@@ -1,6 +1,7 @@
 package app;
 
 import cardapio.ItemCardapio;
+import financeiro.Transacao;
 import pedido.Pedido;
 
 public class Main {
@@ -11,7 +12,7 @@ public class Main {
 
         while (executando) {
             menu.exibirMenu();
-            int opcao = menu.lerOpcaoEntre(0, 4);
+            int opcao = menu.lerOpcaoEntre(0, 5);
 
             switch (opcao) {
                 case 1 -> {
@@ -29,7 +30,7 @@ public class Main {
                         }while (continuar);
 
                         menu.exibirPedido(pedido);
-                    } catch (IllegalArgumentException e) {
+                    } catch (IllegalArgumentException | IllegalStateException e) {
                         menu.exibirMensagem(e.getMessage());
                     }
                 }
@@ -43,6 +44,11 @@ public class Main {
                         break;
                     }
 
+                    if (sistema.pedidoFoiPago(numero)) {
+                        menu.exibirMensagem("Pedidos pagos não podem ser modificados!");
+                        break;
+                    }
+
                     boolean modificando = true;
 
                     while (modificando) {
@@ -51,55 +57,83 @@ public class Main {
 
                         int escolha = menu.lerOpcaoEntre(0, 3);
 
-                        switch (escolha) {
-                            case 1 -> {
-                                ItemCardapio item = menu.montarItem(sistema);
-                                sistema.adicionarItem(numero, item);
-                                menu.exibirMensagem("Item adicionado!");
-                            }
-
-                            case 2 -> {
-                                if (pedido.getItens().isEmpty()) {
-                                    menu.exibirMensagem("Não há itens para remover!");
-                                    break;
+                        try {
+                            switch (escolha) {
+                                case 1 -> {
+                                    ItemCardapio item = menu.montarItem(sistema);
+                                    sistema.adicionarItem(numero, item);
+                                    menu.exibirMensagem("Item adicionado!");
                                 }
 
-                                menu.exibirItensNumerados(pedido);
-                                int indice = menu.lerNumeroItem() - 1;
+                                case 2 -> {
+                                    if (pedido.getItens().isEmpty()) {
+                                        menu.exibirMensagem("Não há itens para remover!");
+                                        break;
+                                    }
 
-                                try {
+                                    menu.exibirItensNumerados(pedido);
+                                    int indice = menu.lerNumeroItem() - 1;
+
                                     sistema.removerItem(numero, indice);
                                     menu.exibirMensagem("Item removido!");
-                                } catch (IllegalArgumentException e) {
-                                    menu.exibirMensagem(e.getMessage());
                                 }
-                            }
 
-                            case 3 -> {
-                                if (menu.confirmar("Deseja cancelar este pedido?")) {
-                                    if (sistema.cancelarPedido(numero)) {
+                                case 3 -> {
+                                    if (menu.confirmar("Deseja cancelar este pedido?")) {
+                                        sistema.cancelarPedido(numero);
                                         menu.exibirMensagem("Pedido cancelado!");
                                         modificando = false;
-                                    } else {
-                                        menu.exibirMensagem("Não foi possível cancelar o pedido!");
                                     }
                                 }
+
+                                case 0 -> modificando = false;
                             }
-
-                            case 0 -> modificando = false;
-
-                            default -> menu.exibirMensagem("Opção inválida!");
+                        } catch (IllegalArgumentException | IllegalStateException e) {
+                            menu.exibirMensagem(e.getMessage());
                         }
                     }
                 }
 
-                case 3 -> menu.exibirPedidos(sistema.listarPedidos());
+                case 3 -> {
+                    int numero = menu.lerNumeroPedido();
+                    Pedido pedido = sistema.buscarPedido(numero);
 
-                case 4 -> {
-                    double total = sistema.calcularTotalDoDia();
+                    if (pedido == null) {
+                        menu.exibirMensagem("Pedido não encontrado!");
+                        break;
+                    }
 
-                    menu.exibirFechamentoDoDia(total);
+                    if (sistema.pedidoFoiPago(numero)) {
+                        menu.exibirMensagem("Este pedido já foi pago!");
+                        break;
+                    }
+
+                    menu.exibirPedido(pedido);
+                    if(!menu.confirmar("Deseja registrar o pagamento?")) {
+                        break;
+                    }
+
+                    double gorjeta = menu.lerGorjeta();
+                    try {
+                        Transacao transacao = sistema.pagarPedido(numero, gorjeta);
+                        menu.exibirPagamento(transacao);
+                    } catch (IllegalArgumentException | IllegalStateException e) {
+                        menu.exibirMensagem(e.getMessage());
+                    }
+                }
+
+                case 4 -> menu.exibirPedidos(sistema.listarPedidos(), sistema);
+
+                case 5 -> {
+                    menu.exibirFechamentoDoDia(
+                            sistema.contarPagamentos(),
+                            sistema.calcularTotalVendas(),
+                            sistema.calcularTotalGorjetas(),
+                            sistema.calcularTotalRecebido(),
+                            sistema.calcularTotalPendente()
+                    );
                     menu.exibirCombinacoes(sistema.obterCombinacoes());
+                    menu.exibirLanchesBase(sistema.obterLanchesBase());
                     executando = false;
                 }
 
@@ -107,8 +141,6 @@ public class Main {
                     menu.exibirMensagem("Sistema encerrado!");
                     executando = false;
                 }
-
-                default -> menu.exibirMensagem("Opção inválida!");
             }
         }
     }

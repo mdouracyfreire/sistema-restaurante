@@ -136,4 +136,8 @@ public class RestauranteFacade {
     public Set<String> obterCombinacoes() {
         return gerenciador.obterCombinacoes();
     }
+
+    public Set<String> obterLanchesBase() {
+        return gerenciador.obterLanchesBase();
+    }
 }

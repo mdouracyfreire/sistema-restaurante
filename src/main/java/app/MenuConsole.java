@@ -2,6 +2,7 @@ package app;
 
 import cardapio.ItemCardapio;
 import cardapio.Lanche;
+import financeiro.Transacao;
 import pedido.Pedido;
 
 import java.util.Collection;
@@ -15,8 +16,9 @@ public class MenuConsole {
         System.out.println("\n==== RESTAURANTE ====");
         System.out.println("1. Registrar novo pedido");
         System.out.println("2. Modificar pedido");
-        System.out.println("3. Listar pedidos do dia");
-        System.out.println("4. Fechar restaurante");
+        System.out.println("3. Pagar pedido");
+        System.out.println("4. Listar pedidos do dia");
+        System.out.println("5. Fechar restaurante");
         System.out.println("0. Sair");
     }
 
@@ -27,7 +29,7 @@ public class MenuConsole {
             try {
                 return Integer.parseInt(scanner.nextLine().trim());
             } catch (NumberFormatException e) {
-                System.out.println("Entrada inválida, digite um número!");
+                exibirMensagem("Entrada inválida, digite um número!");
             }
         }
     }
@@ -86,21 +88,14 @@ public class MenuConsole {
     }
 
     public ItemCardapio montarItem(RestauranteFacade sistema) {
-        while (true) {
-            int opcao = lerOpcaoLanche();
+        int opcao = lerOpcaoLanche();
+        Lanche lanche = sistema.criarLanche(opcao);
+        personalizarLanche(lanche);
 
-            try {
-                Lanche lanche = sistema.criarLanche(opcao);
-                personalizarLanche(lanche);
+        boolean cheddar = confirmar("Adicionar cheddar por R$ 4,00?");
+        boolean baconExtra = confirmar("Adicionar bacon extra por R$ 6,00?");
 
-                boolean cheddar = confirmar("Adicionar cheddar por R$ 4,00?");
-                boolean baconExtra = confirmar("Adicionar bacon extra por R$ 6,00?");
-
-                return sistema.aplicarAdicionais(lanche, cheddar, baconExtra);
-            } catch (IllegalArgumentException e) {
-                exibirMensagem(e.getMessage());
-            }
-        }
+        return sistema.aplicarAdicionais(lanche, cheddar, baconExtra);
     }
 
     public boolean desejaAdicionarMais() {
@@ -111,6 +106,10 @@ public class MenuConsole {
         System.out.println("\nPedido #" + pedido.getNumero());
         System.out.println("Cliente: " + pedido.getNomeCliente());
 
+        if (pedido.getItens().isEmpty()) {
+            exibirMensagem("Nenhum item no pedido!");
+        }
+
         for (ItemCardapio item : pedido.getItens()) {
             System.out.printf("- %s: R$ %.2f%n", item.getDescricao(), item.getPreco());
         }
@@ -118,7 +117,7 @@ public class MenuConsole {
         System.out.printf("Total: R$ %.2f%n", pedido.calcularTotal());
     }
 
-    public void exibirPedidos(Collection<Pedido> pedidos) {
+    public void exibirPedidos(Collection<Pedido> pedidos, RestauranteFacade sistema) {
         if (pedidos.isEmpty()) {
             exibirMensagem("Nenhum pedido registrado!");
             return;
@@ -126,12 +125,19 @@ public class MenuConsole {
 
         for (Pedido pedido : pedidos) {
             exibirPedido(pedido);
+
+            String status = sistema.pedidoFoiPago(pedido.getNumero()) ? "PAGO" : "ABERTO";
+            System.out.println("Status: " + status);
         }
     }
 
-    public void exibirFechamentoDoDia(double total) {
-        System.out.println("\n==== FECHAMENTO ====");
-        System.out.printf("Total vendido: R$ %.2f%n", total);
+    public void exibirFechamentoDoDia(int pagamentos, double vendas, double gorjetas, double recebido, double pendente) {
+        System.out.println("\n==== FECHAMENTO DO DIA ====");
+        System.out.println("Pedidos pagos: " + pagamentos);
+        System.out.printf("Vendas recebidas: R$ %.2f%n", vendas);
+        System.out.printf("Gorjetas: R$ %.2f%n", gorjetas);
+        System.out.printf("Total recebido: R$ %.2f%n", recebido);
+        System.out.printf("Pedidos em aberto: R$ %.2f%n", pendente);
     }
 
     public int lerNumeroPedido() {
@@ -157,7 +163,7 @@ public class MenuConsole {
     }
 
     public void exibirMenuModificacao() {
-        System.out.println("\n==== MODIFICAR ====");
+        System.out.println("\n==== MODIFICAR PEDIDO ====");
         System.out.println("1. Adicionar item");
         System.out.println("2. Remover item");
         System.out.println("3. Cancelar pedido");
@@ -182,6 +188,42 @@ public class MenuConsole {
             }
 
             exibirMensagem("Opção inválida, escolha um número de " + minimo + " a " + maximo + "!");
+        }
+    }
+
+    public double lerGorjeta() {
+        while (true) {
+            System.out.println("Valor da gorjeta (0 para nenhuma): R$ ");
+            String entrada = scanner.nextLine().trim().replace(",", ".");
+
+            try {
+                double gorjeta = Double.parseDouble(entrada);
+
+                if (Double.isFinite(gorjeta) && gorjeta >= 0) {
+                    return gorjeta;
+                }
+
+                exibirMensagem("A gorjeta deve ser um valor válido e não negativo!");
+            } catch (NumberFormatException e) {
+                exibirMensagem("Digite um valor numérico válido!");
+            }
+        }
+    }
+
+    public void exibirPagamento(Transacao transacao) {
+        System.out.println("\n==== PAGAMENTO REGISTRADO ====");
+        System.out.println("Pedido #" + transacao.getNumeroPedido());
+        System.out.printf("Lanches: R$ %.2f%n", transacao.getValor());
+        System.out.printf("Gorjeta: R$ %.2f%n", transacao.getGorjeta());
+        System.out.printf("Total pago: R$ %.2f%n", transacao.getTotal());
+    }
+
+    public void exibirLanchesBase(Set<String> lanchesBase) {
+        System.out.println("\n==== LANCHES BASE DIFERENTES ====");
+        System.out.println("Quantidade: " + lanchesBase.size());
+
+        for (String nome : lanchesBase) {
+            System.out.println("- " + nome);
         }
     }
 }
