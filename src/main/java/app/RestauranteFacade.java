@@ -1,6 +1,7 @@
 package app;
 
 import cardapio.Lanche;
+import cardapio.LancheFactory;
 import pedido.GerenciadorPedidos;
 import pedido.Pedido;
 
@@ -15,9 +16,9 @@ public class RestauranteFacade {
 
     public Lanche criarLanche(int opcao) {
         return switch (opcao) {
-            case 1 -> new Lanche("X-Burguer", 16);
-            case 2 -> new Lanche("X-Salada", 18);
-            case 3 -> new Lanche("X-Bacon", 22);
+            case 1 -> LancheFactory.xBurguer();
+            case 2 -> LancheFactory.xSalada();
+            case 3 -> LancheFactory.xBacon();
             default -> throw new IllegalArgumentException("Opção de lanche inválida!");
         };
     }
