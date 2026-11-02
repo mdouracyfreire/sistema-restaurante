@@ -1,6 +1,6 @@
 package app;
 
-import cardapio.Lanche;
+import cardapio.ItemCardapio;
 import pedido.Pedido;
 
 import java.util.Collection;
@@ -72,8 +72,8 @@ public class MenuConsole {
         System.out.println("\nPedido #" + pedido.getNumero());
         System.out.println("Cliente: " + pedido.getNomeCliente());
 
-        for (Lanche item : pedido.getItens()) {
-            System.out.printf("- %s: R$ %.2f%n", item.getNome(), item.getPreco());
+        for (ItemCardapio item : pedido.getItens()) {
+            System.out.printf("- %s: R$ %.2f%n", item.getDescricao(), item.getPreco());
         }
 
         System.out.printf("Total: R$ %.2f%n", pedido.calcularTotal());

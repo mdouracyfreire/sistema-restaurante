@@ -1,6 +1,6 @@
 package pedido;
 
-import cardapio.Lanche;
+import cardapio.ItemCardapio;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
 public class Pedido {
     private final int numero;
     private String nomeCliente;
-    private final ArrayList<Lanche> itens = new ArrayList<>();
+    private final ArrayList<ItemCardapio> itens = new ArrayList<>();
 
     public Pedido(int numero, String nomeCliente) {
         this.numero = numero;
@@ -30,21 +30,21 @@ public class Pedido {
         this.nomeCliente = nomeCliente;
     }
 
-    public void adicionarItem(Lanche lanche) {
-        if (lanche == null) {
-            throw new IllegalArgumentException("Um lanche precisa ser adicionado!");
+    public void adicionarItem(ItemCardapio item) {
+        if (item == null) {
+            throw new IllegalArgumentException("Um item precisa ser adicionado!");
         }
-        itens.add(lanche);
+        itens.add(item);
     }
 
-    public List<Lanche> getItens() {
+    public List<ItemCardapio> getItens() {
         return List.copyOf(itens);
     }
 
     public double calcularTotal() {
         double total = 0;
 
-        for (Lanche item : itens) {
+        for (ItemCardapio item : itens) {
             total += item.getPreco();
         }
 
