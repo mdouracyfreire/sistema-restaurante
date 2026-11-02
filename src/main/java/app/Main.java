@@ -11,7 +11,7 @@ public class Main {
 
         while (executando) {
             menu.exibirMenu();
-            int opcao = menu.lerOpcao();
+            int opcao = menu.lerOpcaoEntre(0, 4);
 
             switch (opcao) {
                 case 1 -> {
@@ -49,7 +49,7 @@ public class Main {
                         menu.exibirPedido(pedido);
                         menu.exibirMenuModificacao();
 
-                        int escolha = menu.lerOpcao();
+                        int escolha = menu.lerOpcaoEntre(0, 3);
 
                         switch (escolha) {
                             case 1 -> {

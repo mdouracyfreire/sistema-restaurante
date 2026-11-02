@@ -43,7 +43,7 @@ public class MenuConsole {
         System.out.println("2. X-Salada: R$ 18,00");
         System.out.println("3. X-Bacon: R$ 22,00");
 
-        return lerOpcao();
+        return lerOpcaoEntre(1, 3);
     }
 
     public boolean confirmar(String pergunta) {
@@ -170,6 +170,18 @@ public class MenuConsole {
 
         for (String descricao : combinacoes) {
             System.out.println("- " + descricao);
+        }
+    }
+
+    public int lerOpcaoEntre(int minimo, int maximo) {
+        while (true) {
+            int opcao = lerOpcao();
+
+            if (opcao >= minimo && opcao <= maximo) {
+                return opcao;
+            }
+
+            exibirMensagem("Opção inválida, escolha um número de " + minimo + " a " + maximo + "!");
         }
     }
 }
