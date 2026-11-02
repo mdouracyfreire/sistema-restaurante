@@ -7,6 +7,7 @@ import pedido.GerenciadorPedidos;
 import pedido.Pedido;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 public class RestauranteFacade {
@@ -134,10 +135,30 @@ public class RestauranteFacade {
     }
 
     public Set<String> obterCombinacoes() {
-        return gerenciador.obterCombinacoes();
+        Set<String> combinacoes = new HashSet<>();
+
+        for (Pedido pedido : gerenciador.getPedidos()) {
+            if (caixa.pedidoFoiPago(pedido.getNumero())) {
+                for (ItemCardapio item : pedido.getItens()) {
+                    combinacoes.add(item.getDescricao());
+                }
+            }
+        }
+
+        return combinacoes;
     }
 
     public Set<String> obterLanchesBase() {
-        return gerenciador.obterLanchesBase();
+        Set<String> nomesBase = new HashSet<>();
+
+        for (Pedido pedido : gerenciador.getPedidos()) {
+            if (caixa.pedidoFoiPago(pedido.getNumero())) {
+                for (ItemCardapio item : pedido.getItens()) {
+                    nomesBase.add(item.getNomeBase());
+                }
+            }
+        }
+
+        return nomesBase;
     }
 }
