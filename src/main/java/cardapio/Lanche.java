@@ -1,6 +1,6 @@
 package cardapio;
 
-public class Lanche implements ItemCardapio{
+public class Lanche implements ItemCardapio {
     private String nome;
     private double preco;
 
@@ -20,9 +20,10 @@ public class Lanche implements ItemCardapio{
 
     public void setNome(String nome) {
         if (nome == null || nome.trim().isEmpty()) {
-            throw new IllegalArgumentException("O nome do lanche não pode ser vazio!");
+            throw new IllegalArgumentException("Nome do lanche inválido!");
         }
-        this.nome = nome;
+
+        this.nome = nome.trim();
     }
 
     @Override
@@ -32,8 +33,9 @@ public class Lanche implements ItemCardapio{
 
     public void setPreco(double preco) {
         if (!Double.isFinite(preco) || preco < 0) {
-            throw new IllegalArgumentException("O preço não pode ser negativo ou inválido!");
+            throw new IllegalArgumentException("Preço inválido!");
         }
+
         this.preco = preco;
     }
 

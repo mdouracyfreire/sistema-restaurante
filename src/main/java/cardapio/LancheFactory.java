@@ -1,8 +1,8 @@
 package cardapio;
 
 public class LancheFactory {
-
-    private LancheFactory() {}
+    private LancheFactory() {
+    }
 
     public static Lanche xBurguer() {
         return new Lanche("X-Burguer", 16.0);

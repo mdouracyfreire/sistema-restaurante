@@ -1,6 +1,8 @@
-package cardapio;
+package cardapio.adicionais;
 
-public class ComBaconExtra implements ItemCardapio{
+import cardapio.ItemCardapio;
+
+public class ComBaconExtra implements ItemCardapio {
     private final ItemCardapio item;
 
     public ComBaconExtra(ItemCardapio item) {

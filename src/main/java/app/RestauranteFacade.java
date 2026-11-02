@@ -1,21 +1,28 @@
 package app;
 
-import cardapio.*;
+import cardapio.ItemCardapio;
+import cardapio.Lanche;
+import cardapio.LancheFactory;
+import cardapio.adicionais.ComBaconExtra;
+import cardapio.adicionais.ComCheddar;
 import financeiro.Caixa;
 import financeiro.Transacao;
 import pedido.GerenciadorPedidos;
 import pedido.Pedido;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 public class RestauranteFacade {
     private final GerenciadorPedidos gerenciador = new GerenciadorPedidos();
     private final Caixa caixa = new Caixa();
 
-    public Pedido criarPedido(String cliente) {
-        return gerenciador.criaPedido(cliente);
+    public Pedido criarPedido(String nomeCliente) {
+        return gerenciador.criaPedido(nomeCliente);
+    }
+
+    public Pedido buscarPedido(int numero) {
+        return gerenciador.buscarPedido(numero);
     }
 
     public Lanche criarLanche(int opcao) {
@@ -23,16 +30,21 @@ public class RestauranteFacade {
             case 1 -> LancheFactory.xBurguer();
             case 2 -> LancheFactory.xSalada();
             case 3 -> LancheFactory.xBacon();
-            default -> throw new IllegalArgumentException("Opção de lanche inválida!");
+            default -> throw new IllegalArgumentException(
+                    "Opção de lanche inválida!"
+            );
         };
     }
 
-    public void adicionarItem(int numero, ItemCardapio item) {
-        Pedido pedido = exigirPedidoEditavel(numero);
-        pedido.adicionarItem(item);
-    }
+    public ItemCardapio aplicarAdicionais(
+            ItemCardapio item,
+            boolean cheddar,
+            boolean baconExtra) {
 
-    public ItemCardapio aplicarAdicionais(ItemCardapio item, boolean cheddar, boolean baconExtra) {
+        if (item == null) {
+            throw new IllegalArgumentException("Item inválido!");
+        }
+
         if (cheddar) {
             item = new ComCheddar(item);
         }
@@ -44,58 +56,44 @@ public class RestauranteFacade {
         return item;
     }
 
-    public Pedido buscarPedido(int numero) {
-        return gerenciador.buscarPedido(numero);
+    public void adicionarItem(int numeroPedido, ItemCardapio item) {
+        Pedido pedido = exigirPedidoEditavel(numeroPedido);
+        pedido.adicionarItem(item);
     }
 
-    public void removerItem(int numero, int indice) {
-        Pedido pedido = exigirPedidoEditavel(numero);
+    public void removerItem(int numeroPedido, int indice) {
+        Pedido pedido = exigirPedidoEditavel(numeroPedido);
         pedido.removerItem(indice);
     }
 
-    public boolean cancelarPedido(int numero) {
-        Pedido pedido = gerenciador.buscarPedido(numero);
-
-        if (pedido == null) {
-            return false;
-        }
-
-        if (caixa.pedidoFoiPago(numero)){
-            throw new IllegalStateException("Não é possível cancelar um pedido pago!");
-        }
-
-        return gerenciador.cancelarPedido(numero);
+    public boolean cancelarPedido(int numeroPedido) {
+        exigirPedidoEditavel(numeroPedido);
+        return gerenciador.cancelarPedido(numeroPedido);
     }
 
-    private Pedido exigirPedidoEditavel(int numero) {
-        Pedido pedido = gerenciador.buscarPedido(numero);
-
-        if (pedido == null) {
-            throw new IllegalArgumentException("Pedido não encontrado!");
-        }
-
-        if (caixa.pedidoFoiPago(numero)) {
-            throw new IllegalStateException("Não é possível modificar um pedido pago!");
-        }
-
-        return pedido;
-    }
-
-    public Transacao pagarPedido(int numero, double gorjeta) {
-        Pedido pedido = exigirPedidoEditavel(numero);
+    public Transacao pagarPedido(int numeroPedido, double gorjeta) {
+        Pedido pedido = exigirPedidoEditavel(numeroPedido);
 
         if (pedido.getItens().isEmpty()) {
-            throw new IllegalStateException("Não é possível pagar um pedido vazio!");
+            throw new IllegalStateException(
+                    "Não é possível pagar um pedido vazio!"
+            );
         }
 
-        Transacao transacao = new Transacao(numero, pedido.calcularTotal(), gorjeta);
+        Transacao transacao = new Transacao(
+                numeroPedido,
+                pedido.calcularTotal(),
+                gorjeta
+        );
+
         caixa.registrarTransacao(transacao);
+        pedido.marcarComoPago();
 
         return transacao;
     }
 
-    public boolean pedidoFoiPago(int numero) {
-        return caixa.pedidoFoiPago(numero);
+    public boolean pedidoFoiPago(int numeroPedido) {
+        return caixa.pedidoFoiPago(numeroPedido);
     }
 
     public Collection<Pedido> listarPedidos() {
@@ -126,7 +124,7 @@ public class RestauranteFacade {
         double total = 0;
 
         for (Pedido pedido : gerenciador.getPedidos()) {
-            if (!caixa.pedidoFoiPago(pedido.getNumero())) {
+            if (!pedido.isPago()) {
                 total += pedido.calcularTotal();
             }
         }
@@ -135,30 +133,26 @@ public class RestauranteFacade {
     }
 
     public Set<String> obterCombinacoes() {
-        Set<String> combinacoes = new HashSet<>();
-
-        for (Pedido pedido : gerenciador.getPedidos()) {
-            if (caixa.pedidoFoiPago(pedido.getNumero())) {
-                for (ItemCardapio item : pedido.getItens()) {
-                    combinacoes.add(item.getDescricao());
-                }
-            }
-        }
-
-        return combinacoes;
+        return gerenciador.obterCombinacoes();
     }
 
     public Set<String> obterLanchesBase() {
-        Set<String> nomesBase = new HashSet<>();
+        return gerenciador.obterLanchesBase();
+    }
 
-        for (Pedido pedido : gerenciador.getPedidos()) {
-            if (caixa.pedidoFoiPago(pedido.getNumero())) {
-                for (ItemCardapio item : pedido.getItens()) {
-                    nomesBase.add(item.getNomeBase());
-                }
-            }
+    private Pedido exigirPedidoEditavel(int numeroPedido) {
+        Pedido pedido = gerenciador.buscarPedido(numeroPedido);
+
+        if (pedido == null) {
+            throw new IllegalArgumentException("Pedido não encontrado!");
         }
 
-        return nomesBase;
+        if (pedido.isPago() || caixa.pedidoFoiPago(numeroPedido)) {
+            throw new IllegalStateException(
+                    "Não é possível modificar um pedido já pago!"
+            );
+        }
+
+        return pedido;
     }
 }

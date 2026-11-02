@@ -1,6 +1,8 @@
-package cardapio;
+package cardapio.adicionais;
 
-public class ComCheddar implements ItemCardapio{
+import cardapio.ItemCardapio;
+
+public class ComCheddar implements ItemCardapio {
     private final ItemCardapio item;
 
     public ComCheddar(ItemCardapio item) {

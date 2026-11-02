@@ -1,5 +1,7 @@
 package cardapio;
 
+import cardapio.adicionais.ComBaconExtra;
+import cardapio.adicionais.ComCheddar;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

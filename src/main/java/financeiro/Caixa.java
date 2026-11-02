@@ -8,12 +8,18 @@ public class Caixa {
 
     public void registrarTransacao(Transacao transacao) {
         if (transacao == null) {
-            throw new IllegalArgumentException("Transação não pode se nula!");
+            throw new IllegalArgumentException(
+                    "Transação não pode ser nula!"
+            );
         }
 
-        if (!transacoes.add(transacao)) {
-            throw new IllegalStateException("Este pedido já foi pago!");
+        if (pedidoFoiPago(transacao.getNumeroPedido())) {
+            throw new IllegalStateException(
+                    "Este pedido já foi pago!"
+            );
         }
+
+        transacoes.add(transacao);
     }
 
     public boolean pedidoFoiPago(int numeroPedido) {
