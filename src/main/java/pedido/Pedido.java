@@ -41,6 +41,14 @@ public class Pedido {
         return List.copyOf(itens);
     }
 
+    public void removerItem(int indice) {
+        if (indice < 0 || indice >= itens.size()) {
+            throw new IllegalArgumentException("Item não encontrado!");
+        }
+
+        itens.remove(indice);
+    }
+
     public double calcularTotal() {
         double total = 0;
 

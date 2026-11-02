@@ -44,6 +44,20 @@ public class RestauranteFacade {
         return item;
     }
 
+    public Pedido buscarPedido(int numero) {
+        return gerenciador.buscarPedido(numero);
+    }
+
+    public void removerItem(int numero, int indice) {
+        Pedido pedido = buscarPedido(numero);
+
+        if (pedido == null) {
+            throw new IllegalArgumentException("Pedido não encontrado!");
+        }
+
+        pedido.removerItem(indice);
+    }
+
     public Collection<Pedido> listarPedidos() {
         return gerenciador.getPedidos();
     }
