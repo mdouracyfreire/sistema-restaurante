@@ -1,7 +1,6 @@
 package app;
 
-import cardapio.Lanche;
-import cardapio.LancheFactory;
+import cardapio.*;
 import pedido.GerenciadorPedidos;
 import pedido.Pedido;
 
@@ -23,14 +22,26 @@ public class RestauranteFacade {
         };
     }
 
-    public void adicionarLanche(int numero, int opcao) {
+    public void adicionarItem(int numero, ItemCardapio item) {
         Pedido pedido = gerenciador.buscarPedido(numero);
 
         if (pedido == null) {
             throw new IllegalArgumentException("Pedido não encontrado!");
         }
 
-        pedido.adicionarItem(criarLanche(opcao));
+        pedido.adicionarItem(item);
+    }
+
+    public ItemCardapio aplicarAdicionais(ItemCardapio item, boolean cheddar, boolean baconExtra) {
+        if (cheddar) {
+            item = new ComCheddar(item);
+        }
+
+        if (baconExtra) {
+            item = new ComBaconExtra(item);
+        }
+
+        return item;
     }
 
     public Collection<Pedido> listarPedidos() {

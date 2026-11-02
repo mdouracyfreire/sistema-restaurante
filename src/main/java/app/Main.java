@@ -1,5 +1,6 @@
 package app;
 
+import cardapio.ItemCardapio;
 import pedido.Pedido;
 
 public class Main {
@@ -20,15 +21,10 @@ public class Main {
                         boolean continuar;
 
                         do {
-                            int opcaoLanche = menu.lerOpcaoLanche();
+                            ItemCardapio item = menu.montarItem(sistema);
 
-                            try {
-                                sistema.adicionarLanche(pedido.getNumero(), opcaoLanche);
-                                menu.exibirMensagem("Lanche adicionado!");
-                            } catch (IllegalArgumentException e) {
-                                menu.exibirMensagem(e.getMessage());
-                            }
-
+                            sistema.adicionarItem(pedido.getNumero(), item);
+                            menu.exibirMensagem("Lanche adicionado!");
                             continuar = menu.desejaAdicionarMais();
                         }while (continuar);
 

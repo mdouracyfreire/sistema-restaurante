@@ -1,6 +1,7 @@
 package app;
 
 import cardapio.ItemCardapio;
+import cardapio.Lanche;
 import pedido.Pedido;
 
 import java.util.Collection;
@@ -57,6 +58,22 @@ public class MenuConsole {
             }
 
             System.out.println("Digite 's' ou 'n'!");
+        }
+    }
+
+    public ItemCardapio montarItem(RestauranteFacade sistema) {
+        while (true) {
+            int opcao = lerOpcaoLanche();
+
+            try {
+                Lanche lanche = sistema.criarLanche(opcao);
+                boolean cheddar = confirmar("Adicionar cheddar por R$ 4,00?");
+                boolean baconExtra = confirmar("Adicionar bacon extra por R$ 6,00?");
+
+                return sistema.aplicarAdicionais(lanche, cheddar, baconExtra);
+            } catch (IllegalArgumentException e) {
+                exibirMensagem(e.getMessage());
+            }
         }
     }
 
