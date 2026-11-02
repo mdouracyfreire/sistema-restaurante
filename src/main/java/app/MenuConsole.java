@@ -14,7 +14,7 @@ public class MenuConsole {
         System.out.println("1. Registrar novo pedido");
         System.out.println("2. Listar pedidos do dia");
         System.out.println("3. Fechar restaurante");
-        System.out.println("4. Sair");
+        System.out.println("0. Sair");
     }
 
     public int lerOpcao() {
