@@ -61,12 +61,32 @@ public class MenuConsole {
         }
     }
 
+    public void personalizarLanche(Lanche lanche){
+        if (confirmar("Retirar queijo?")) {
+            lanche.setQueijo(false);
+        }
+
+        if (confirmar("Retirar alface?")) {
+            lanche.setAlface(false);
+        }
+
+        if (confirmar("Retirar tomate?")) {
+            lanche.setTomate(false);
+        }
+
+        if (confirmar("Retirar cebola?")) {
+            lanche.setCebola(false);
+        }
+    }
+
     public ItemCardapio montarItem(RestauranteFacade sistema) {
         while (true) {
             int opcao = lerOpcaoLanche();
 
             try {
                 Lanche lanche = sistema.criarLanche(opcao);
+                personalizarLanche(lanche);
+
                 boolean cheddar = confirmar("Adicionar cheddar por R$ 4,00?");
                 boolean baconExtra = confirmar("Adicionar bacon extra por R$ 6,00?");
 
