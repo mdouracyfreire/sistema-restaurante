@@ -58,6 +58,10 @@ public class RestauranteFacade {
         pedido.removerItem(indice);
     }
 
+    public boolean cancelarPedido(int numero) {
+        return gerenciador.cancelarPedido(numero);
+    }
+
     public Collection<Pedido> listarPedidos() {
         return gerenciador.getPedidos();
     }

@@ -24,6 +24,10 @@ public class GerenciadorPedidos {
         return List.copyOf(pedidos.values());
     }
 
+    public boolean cancelarPedido(int numero) {
+        return pedidos.remove(numero) != null;
+    }
+
     public double calcularTotalDoDia() {
         double total = 0;
 

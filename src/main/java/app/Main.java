@@ -75,6 +75,17 @@ public class Main {
                                 }
                             }
 
+                            case 3 -> {
+                                if (menu.confirmar("Deseja cancelar este pedido?")) {
+                                    if (sistema.cancelarPedido(numero)) {
+                                        menu.exibirMensagem("Pedido cancelado!");
+                                        modificando = false;
+                                    } else {
+                                        menu.exibirMensagem("Não foi possível cancelar o pedido!");
+                                    }
+                                }
+                            }
+
                             case 0 -> modificando = false;
 
                             default -> menu.exibirMensagem("Opção inválida!");

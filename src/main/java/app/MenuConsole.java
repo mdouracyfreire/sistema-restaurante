@@ -21,7 +21,7 @@ public class MenuConsole {
 
     public int lerOpcao() {
         while (true) {
-            System.out.print("Escolha uma opção: ");
+            System.out.print("Digite aqui: ");
 
             try {
                 return Integer.parseInt(scanner.nextLine().trim());
@@ -134,12 +134,12 @@ public class MenuConsole {
     }
 
     public int lerNumeroPedido() {
-        System.out.println("Digite o número do pedido: ");
+        System.out.println("Qual o número do pedido?");
         return lerOpcao();
     }
 
     public int lerNumeroItem() {
-        System.out.println("Digite o número do item: ");
+        System.out.println("Qual o número do item? ");
         return lerOpcao();
     }
 
