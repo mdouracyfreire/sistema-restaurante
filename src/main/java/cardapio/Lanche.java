@@ -70,6 +70,11 @@ public class Lanche implements ItemCardapio{
     }
 
     @Override
+    public String getNomeBase() {
+        return nome;
+    }
+
+    @Override
     public String getDescricao() {
         String descricao = nome;
 
