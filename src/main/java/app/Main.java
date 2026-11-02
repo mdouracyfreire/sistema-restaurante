@@ -99,6 +99,7 @@ public class Main {
                     double total = sistema.calcularTotalDoDia();
 
                     menu.exibirFechamentoDoDia(total);
+                    menu.exibirCombinacoes(sistema.obterCombinacoes());
                     executando = false;
                 }
 

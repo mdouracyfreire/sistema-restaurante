@@ -6,6 +6,7 @@ import pedido.Pedido;
 
 import java.util.Collection;
 import java.util.Scanner;
+import java.util.Set;
 
 public class MenuConsole {
     private final Scanner scanner = new Scanner(System.in);
@@ -103,7 +104,7 @@ public class MenuConsole {
     }
 
     public boolean desejaAdicionarMais() {
-        return confirmar("Adicionar outro lanche? ");
+        return confirmar("Adicionar outro lanche?");
     }
 
     public void exibirPedido(Pedido pedido) {
@@ -161,5 +162,14 @@ public class MenuConsole {
         System.out.println("2. Remover item");
         System.out.println("3. Cancelar pedido");
         System.out.println("0. Voltar");
+    }
+
+    public void exibirCombinacoes(Set<String> combinacoes) {
+        System.out.println("\n==== COMBINAÇÕES DIFERENTES ====");
+        System.out.println("Quantidade: " + combinacoes.size());
+
+        for (String descricao : combinacoes) {
+            System.out.println("- " + descricao);
+        }
     }
 }
