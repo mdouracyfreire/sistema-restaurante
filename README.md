@@ -65,6 +65,22 @@ O valor final de cada pedido é calculado automaticamente, considerando os lanch
 - Testes automatizados;
 - Separação de responsabilidades.
 
+## 🎥 Demonstração do Projeto
+
+Confira o vídeo de apresentação do **Sistema de Restaurante**, com uma explicação sobre sua estrutura, principais funcionalidades e demonstração prática da aplicação.
+
+<div align="center">
+
+<a href="https://youtu.be/C2bLHgniGEU">
+  <img src="https://img.shields.io/badge/▶_Assistir_Demonstração-YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="Assistir demonstração do projeto"/>
+</a>
+
+<br>
+
+*Apresentação técnica e demonstração de execução do sistema.*
+
+</div>
+
 ## 🏗️ Estrutura do projeto
 
 O código está organizado em pacotes com responsabilidades específicas:
