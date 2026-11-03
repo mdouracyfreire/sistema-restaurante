@@ -71,7 +71,7 @@ Confira o vídeo de apresentação do **Sistema de Restaurante**, com uma explic
 
 <div align="center">
 
-<a href="https://youtu.be/C2bLHgniGEU">
+<a href="https://youtu.be/-qlRlQUgAHs">
   <img src="https://img.shields.io/badge/▶_Assistir_Demonstração-YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="Assistir demonstração do projeto"/>
 </a>
 
